@@ -59,7 +59,7 @@ app.MapPost("/fornecedor", async (
     context.Fornecedores.Add(fornecedor);
     var result = await context.SaveChangesAsync();
 
-    //Validação que se criar um fornecedor ele já te devolve informando a rota para você acessar(2 métodos para fazer isso)
+    //Validação que se criar um fornecedor ele já te devolve informando a rota para você acessar no navegador(2 métodos fazem isso)
     return result > 0
         ? Results.CreatedAtRoute("GetFornecedorPorId", new { id = fornecedor.Id }, fornecedor)
         : Results.BadRequest("Houve um problema ao salvar o registro do fornecedor!");
@@ -78,7 +78,7 @@ app.MapPut("fornecedor/{id}", async (
     Fornecedor fornecedor) =>
 {
     //Validando se o fornecedor existe
-    var fornecedorBanco = await context.Fornecedores.FindAsync(id);
+    var fornecedorBanco = await context.Fornecedores.AsNoTracking<Fornecedor>().FirstOrDefaultAsync(f=>f.Id == id);
     if (fornecedorBanco == null) return Results.NotFound();
 
     if (!MiniValidator.TryValidate(fornecedor, out var errors))
@@ -90,10 +90,33 @@ app.MapPut("fornecedor/{id}", async (
     return result > 0
         ? Results.NoContent()
         : Results.BadRequest("Houve um problema ao salvar o registro do fornecedor!");
+
 }).ProducesValidationProblem()
 .Produces<Fornecedor>(StatusCodes.Status204NoContent)
 .Produces(StatusCodes.Status400BadRequest)
 .WithName("PutFornecedor")
+.WithTags("Fornecedor");
+
+
+app.MapDelete("fornecedor/{id}", async (
+    Guid id,
+    MinimalContextDb context) =>
+{
+    //Validando se o fornecedor existe
+    var fornecedor= await context.Fornecedores.FindAsync(id);
+    if (fornecedor == null) return Results.NotFound();
+
+    context.Fornecedores.Remove(fornecedor);
+    var result = await context.SaveChangesAsync();
+
+    return result > 0
+        ? Results.NoContent()
+        : Results.BadRequest("Houve um problema ao salvar o registro do fornecedor!");
+
+}).Produces(StatusCodes.Status400BadRequest)
+.Produces<Fornecedor>(StatusCodes.Status204NoContent)
+.Produces(StatusCodes.Status404NotFound)
+.WithName("DeleteFornecedor")
 .WithTags("Fornecedor");
 
 app.Run();
