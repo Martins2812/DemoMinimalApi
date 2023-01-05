@@ -12,7 +12,8 @@
 		 <PrivateAssets>all</PrivateAssets>
 		 <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	 </PackageReference>
-	 <PackageReference Include="MiniValidation" Version="0.4.2-pre.20220306.48" />  
+	 <PackageReference Include="MiniValidation" Version="0.4.2-pre.20220306.48" />
+	 <PackageReference Include="NetDevPack.Identity" Version="7.0.1" />  
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
